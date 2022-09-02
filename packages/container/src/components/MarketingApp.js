@@ -2,24 +2,24 @@ import { mount } from "marketing/MarketingApp";
 import React, { useRef, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
-const MarketingApp = () => {
+export default () => {
   const ref = useRef(null);
-  let history = useHistory();
+  const history = useHistory();
 
   useEffect(() => {
-    if (ref.current) {
-      const { onParentNavigate } = mount(ref.current, {
-        onNavigate: ({ pathname: nextPathname }) => {
-          const { pathname } = history.location;
-          if (pathname !== nextPathname) {
-            history.push(nextPathname);
-          }
-        },
-      });
-      history.listen(onParentNavigate);
-    }
-  }, [ref]);
-  return <div ref={ref}></div>;
-};
+    const { onParentNavigate } = mount(ref.current, {
+      initialPath: history.location.pathname,
+      onNavigate: ({ pathname: nextPathname }) => {
+        const { pathname } = history.location;
 
-export default MarketingApp;
+        if (pathname !== nextPathname) {
+          history.push(nextPathname);
+        }
+      },
+    });
+
+    history.listen(onParentNavigate);
+  }, []);
+
+  return <div ref={ref} />;
+};
